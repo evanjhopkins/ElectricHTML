@@ -11,7 +11,7 @@ Add ElectricHTML to your HTML file with a single script tag:
     eh-source="http://api.open-notify.org"
     eh-data-route="/iss-now.json"
     eh-interval="1s"
-    src="https://some-cdn.com/electric-html.js"
+    src="https://cdn.jsdelivr.net/gh/evanjhopkins/ElectricHTML@main/electric-html.js"
 ></script>
 ```
 
