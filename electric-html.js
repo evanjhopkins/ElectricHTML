@@ -8,6 +8,33 @@
     return;
   }
 
+  function get(obj, path) {
+    if (!obj || typeof obj !== "object" || !path || typeof path !== "string") {
+      return undefined;
+    }
+
+    const keys = path.split(".");
+    let current = obj;
+
+    for (const key of keys) {
+      if (
+        current === null ||
+        current === undefined ||
+        typeof current !== "object"
+      ) {
+        return undefined;
+      }
+
+      current = current[key];
+
+      if (current === undefined) {
+        return undefined;
+      }
+    }
+
+    return current;
+  }
+
   async function pollData() {
     try {
       const response = await fetch(`${source}${dataRoute}`);
@@ -19,13 +46,13 @@
   }
 
   function updateValues(data) {
-    for (const key in data) {
-      const dataEl = document.querySelector(`[eh-data="${key}"]`);
-      if (!dataEl) continue;
-      const labelEl = dataEl.querySelector("[eh-label]");
-      const valueEl = dataEl.querySelector("[eh-value]");
-      labelEl.textContent = key;
-      valueEl.textContent = data[key];
+    const dataEls = document.querySelectorAll(`[eh-data]`);
+    for (const dataEl of dataEls) {
+      const valueKey = dataEl.getAttribute("eh-data");
+      const value = get(data, valueKey);
+      if (value !== undefined) {
+        dataEl.textContent = value;
+      }
     }
   }
 
