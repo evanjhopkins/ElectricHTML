@@ -76,9 +76,17 @@
     const clickEls = document.querySelectorAll(`[eh-get]`);
     for (const clickEl of clickEls) {
       const route = clickEl.getAttribute("eh-get");
+      const triggers = clickEl.hasAttribute("eh-triggers");
+      const provides = clickEl.hasAttribute("eh-provides");
       clickEl.onclick = async () => {
-        await fetch(`${source}${route}`);
-        pollData();
+        const res = await fetch(`${source}${route}`);
+        if (triggers) {
+          pollData();
+        }
+        if (provides) {
+          const data = await res.json();
+          updateValues(data);
+        }
       };
     }
   }

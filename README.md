@@ -70,3 +70,25 @@ Format your data with prefixes, postfixes, and rounding using additional attribu
 <!-- Display as "87%" with no decimal places -->
 <div eh-data="completion_rate" eh-postfix="%" eh-round="0"></div>
 ```
+
+## Outbound Requests
+
+Send GET requests to your API and handle responses directly from your HTML elements:
+
+- **`eh-get`**: The API route to send a GET request to when the element is interacted with
+- **`eh-triggers`**: Triggers a fetch of state after the request completes
+- **`eh-provides`**: Indicates the request returns JSON that should update element values (just like polling updates)
+
+### Examples
+
+```html
+<!-- Button that triggers a request and refreshes state -->
+<button eh-get="/api/increment" eh-triggers="true">
+  Increment Value
+</button>
+
+<!-- Button that triggers a request and uses the response to update values -->
+<button eh-get="/api/calculate" eh-provides="true">
+  Calculate Value
+</button>
+```
