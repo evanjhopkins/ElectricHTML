@@ -83,12 +83,12 @@ Send GET requests to your API and handle responses directly from your HTML eleme
 
 ```html
 <!-- Button that triggers a request and refreshes state -->
-<button eh-get="/api/increment" eh-triggers="true">
+<button eh-get="/api/increment" eh-triggers>
   Increment Value
 </button>
 
 <!-- Button that triggers a request and uses the response to update values -->
-<button eh-get="/api/calculate" eh-provides="true">
+<button eh-get="/api/calculate" eh-provides>
   Calculate Value
 </button>
 ```
