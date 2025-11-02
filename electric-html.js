@@ -49,8 +49,24 @@
     const dataEls = document.querySelectorAll(`[eh-data]`);
     for (const dataEl of dataEls) {
       const valueKey = dataEl.getAttribute("eh-data");
-      const value = get(data, valueKey);
+      let value = get(data, valueKey);
       if (value !== undefined) {
+        const roundDecimalsStr = dataEl.getAttribute("eh-round");
+        if (roundDecimalsStr !== null) {
+          const roundDecimalsInt = parseInt(roundDecimalsStr);
+          value = parseFloat(value).toFixed(roundDecimalsInt);
+        }
+
+        const prefix = dataEl.getAttribute("eh-prefix");
+        if (prefix !== null) {
+          value = `${prefix}${value}`;
+        }
+
+        const postfix = dataEl.getAttribute("eh-postfix");
+        if (postfix !== null) {
+          value = `${value}${postfix}`;
+        }
+
         dataEl.textContent = value;
       }
     }

@@ -52,3 +52,21 @@ ElectricHTML will automatically update the content of these elements whenever th
 ---
 
 That's the core functionality! However, ElectricHTML offers many more features for advanced use cases outlined below.
+
+## Text Decoration
+
+Format your data with prefixes, postfixes, and rounding using additional attributes:
+
+- **`eh-prefix`**: Add text before the value (e.g., currency symbols)
+- **`eh-postfix`**: Add text after the value (e.g., units or percent signs)
+- **`eh-round`**: Round numerical values to a fixed number of decimal places
+
+### Examples
+
+```html
+<!-- Display as "$24.99" with 2 decimal places -->
+<div eh-data="price" eh-prefix="$" eh-round="2"></div>
+
+<!-- Display as "87%" with no decimal places -->
+<div eh-data="completion_rate" eh-postfix="%" eh-round="0"></div>
+```
