@@ -71,10 +71,13 @@
         return false;
       }
       const template = maybeListEl.firstElementChild.cloneNode(true);
+      template.style.display = "none";
 
       const newChildren = [template];
       for (const rowData of value) {
         const row = template.cloneNode(true);
+        row.style.display = "";
+
         for (const key in rowData) {
           const rowDataEl = row.querySelector(`[eh-li="${key}"]`);
           if (rowDataEl !== null) {
