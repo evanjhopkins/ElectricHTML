@@ -45,29 +45,60 @@
     }
   }
 
+  function insertValueOnEl(el, value) {
+    const roundDecimalsStr = el.getAttribute("eh-round");
+    if (roundDecimalsStr !== null) {
+      const roundDecimalsInt = parseInt(roundDecimalsStr);
+      value = parseFloat(value).toFixed(roundDecimalsInt);
+    }
+
+    const prefix = el.getAttribute("eh-prefix");
+    if (prefix !== null) {
+      value = `${prefix}${value}`;
+    }
+
+    const postfix = el.getAttribute("eh-postfix");
+    if (postfix !== null) {
+      value = `${value}${postfix}`;
+    }
+
+    el.textContent = value;
+  }
+
+  function attemptResolveList(maybeListEl, value) {
+    if (Array.isArray(value)) {
+      if (!maybeListEl.firstElementChild) {
+        return false;
+      }
+      const template = maybeListEl.firstElementChild.cloneNode(true);
+
+      const newChildren = [template];
+      for (const rowData of value) {
+        const row = template.cloneNode(true);
+        for (const key in rowData) {
+          const rowDataEl = row.querySelector(`[eh-li="${key}"]`);
+          if (rowDataEl !== null) {
+            insertValueOnEl(rowDataEl, rowData[key]);
+          }
+          newChildren.push(row);
+        }
+      }
+      maybeListEl.replaceChildren(...newChildren);
+      return true;
+    }
+  }
+
   function updateValues(data) {
     const dataEls = document.querySelectorAll(`[eh-data]`);
     for (const dataEl of dataEls) {
       const valueKey = dataEl.getAttribute("eh-data");
       let value = get(data, valueKey);
       if (value !== undefined) {
-        const roundDecimalsStr = dataEl.getAttribute("eh-round");
-        if (roundDecimalsStr !== null) {
-          const roundDecimalsInt = parseInt(roundDecimalsStr);
-          value = parseFloat(value).toFixed(roundDecimalsInt);
+        if (attemptResolveList(dataEl, value)) {
+          continue;
         }
 
-        const prefix = dataEl.getAttribute("eh-prefix");
-        if (prefix !== null) {
-          value = `${prefix}${value}`;
-        }
-
-        const postfix = dataEl.getAttribute("eh-postfix");
-        if (postfix !== null) {
-          value = `${value}${postfix}`;
-        }
-
-        dataEl.textContent = value;
+        insertValueOnEl(dataEl, value);
       }
     }
   }

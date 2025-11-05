@@ -92,3 +92,47 @@ Send GET requests to your API and handle responses directly from your HTML eleme
   Calculate Value
 </button>
 ```
+
+## Rendering Lists
+
+ElectricHTML can automatically render arrays of data using a template-based approach. When `eh-data` points to an array, the first child element becomes the template and is repeated for each item in the array.
+
+### How It Works
+
+- Use `eh-data` on a container element that points to an array in your JSON
+- The container's first child becomes the template
+- Use `eh-li` attributes within the template to bind to properties of each array item
+- All text decoration attributes (`eh-prefix`, `eh-postfix`, `eh-round`) work with `eh-li`
+
+### Example
+
+Given this API response:
+
+```json
+{
+  "logs": [
+    { "timestamp": "2025-11-04 10:32:15", "message": "Server started" },
+    { "timestamp": "2025-11-04 10:32:18", "message": "Database connected" },
+    { "timestamp": "2025-11-04 10:32:22", "message": "Ready to accept connections" }
+  ]
+}
+```
+
+You can render it with:
+
+```html
+<div eh-data="logs">
+  <div>
+    <span eh-li="timestamp" eh-prefix="[LOG] "></span>
+    <span eh-li="message"></span>
+  </div>
+</div>
+```
+
+This will produce:
+
+```
+[LOG] 2025-11-04 10:32:15 Server started
+[LOG] 2025-11-04 10:32:18 Database connected
+[LOG] 2025-11-04 10:32:22 Ready to accept connections
+```
