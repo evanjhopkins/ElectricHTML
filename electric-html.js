@@ -46,6 +46,12 @@
   }
 
   function insertValueOnEl(el, value) {
+    const multStr = el.getAttribute("eh-mult");
+    if (multStr !== null) {
+      const mult = parseFloat(multStr);
+      value = parseFloat(value) * mult;
+    }
+
     const roundDecimalsStr = el.getAttribute("eh-round");
     if (roundDecimalsStr !== null) {
       const roundDecimalsInt = parseInt(roundDecimalsStr);

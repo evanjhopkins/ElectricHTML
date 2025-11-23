@@ -60,15 +60,19 @@ Format your data with prefixes, postfixes, and rounding using additional attribu
 - **`eh-prefix`**: Add text before the value (e.g., currency symbols)
 - **`eh-postfix`**: Add text after the value (e.g., units or percent signs)
 - **`eh-round`**: Round numerical values to a fixed number of decimal places
+- **`eh-mult`**: Multiply numerical values (e.g. percents represented in decimals)
 
 ### Examples
 
 ```html
-<!-- Display as "$24.99" with 2 decimal places -->
+<!-- Display "24.992" as "$24.99" with 2 decimal places -->
 <div eh-data="price" eh-prefix="$" eh-round="2"></div>
 
-<!-- Display as "87%" with no decimal places -->
+<!-- Display "87.23" as "87%" with no decimal places -->
 <div eh-data="completion_rate" eh-postfix="%" eh-round="0"></div>
+
+<!-- Display 0.143 as "14%" with no decimal places -->
+<div eh-data="cash_percent" eh-mult="100" eh-round="0" eh-postfix="%"></div>
 ```
 
 ## Outbound Requests
