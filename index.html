@@ -1029,9 +1029,12 @@
           margin-bottom: 1.3rem;
         }
 
-        .hero-side .orbital-card,
+        .hero-side .orbital-card {
+          min-height: 15rem;
+        }
+
         .hero-side .demo-code-frame pre {
-          min-height: 0;
+          min-height: 15rem;
         }
 
         .terminal-name {
@@ -1366,63 +1369,6 @@
 <span class="t-tag">&lt;button</span> <span class="t-attr">eh-get</span>=<span class="t-value">"/api/refresh"</span> <span class="t-attr">eh-provides</span><span class="t-tag">&gt;</span>
   Refresh now
 <span class="t-tag">&lt;/button&gt;</span></code></pre>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="wrap demo-layout">
-          <div class="demo-copy">
-            <div class="section-kicker">Live Example</div>
-            <h2>Why this demo works as a landing page centerpiece.</h2>
-            <p class="section-copy">
-              The hero now shows ElectricHTML doing something real immediately:
-              a public API response becomes a small live interface with no app
-              shell, no component framework, and no heavy setup.
-            </p>
-            <div class="demo-points">
-              <div class="demo-point">
-                <div class="demo-point-mark"></div>
-                <div>
-                  <strong>Real source data</strong>
-                  <span>
-                    The ISS values come from
-                    <a href="https://wheretheiss.at/w/developer">wheretheiss.at</a>,
-                    so visitors see actual live telemetry instead of mock data.
-                  </span>
-                </div>
-              </div>
-              <div class="demo-point">
-                <div class="demo-point-mark"></div>
-                <div>
-                  <strong>Direct mapping</strong>
-                  <span>
-                    The HTML view shows how a few attributes are enough to bind
-                    latitude, longitude, altitude, and velocity into the UI.
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="block">
-            <div class="section-kicker">What It Proves</div>
-            <h2>Small enough for a landing page, real enough to trust.</h2>
-            <p class="section-copy">
-              Putting the live example above the fold makes the pitch tangible.
-              Visitors can inspect the HTML, switch back to the running preview,
-              and understand the framework in seconds.
-            </p>
-            <div class="mini-grid">
-              <div class="mini">
-                <strong>Above the fold</strong>
-                <span>The first screen now shows ElectricHTML in action instead of only describing it.</span>
-              </div>
-              <div class="mini">
-                <strong>View source quickly</strong>
-                <span>The built-in Preview and HTML switch keeps the demo interactive without feeling cluttered.</span>
-              </div>
             </div>
           </div>
         </div>
