@@ -1,29 +1,55 @@
 # ⚡ElectricHTML⚡
 
-ElectricHtml is a lightweight JavaScript library that transforms static HTML into live-updating dashboards. Simply tag your HTML elements with custom attributes and let ElectricHtml automatically sync them with your JSON API endpoints in real-time. Inspired by HTMX's philosophy, and built to seamlessly coexist.
+<p align="center">
+  <strong>Turn plain HTML into a live, API-driven interface.</strong>
+</p>
 
-## Getting Started
+<p align="center">
+  ElectricHTML is a tiny browser library for binding JSON responses directly to HTML with custom attributes.
+  No components, no build step, no virtual DOM.
+</p>
 
-Add ElectricHTML to your HTML file with a single script tag:
+<p align="center">
+  <a href="https://github.com/evanjhopkins/ElectricHTML/blob/main/LICENSE">MIT License</a>
+</p>
+
+## Why ElectricHTML
+
+ElectricHTML is built for simple dashboards, status panels, control surfaces, and lightweight internal tools where you want live data without pulling in a full frontend framework.
+
+- Attribute-driven bindings
+- Works with plain HTML
+- JSON polling out of the box
+- Supports nested object paths
+- Built-in text formatting helpers
+- Simple action requests with `eh-get`
+- Template-based array rendering
+
+## Quick Start
+
+Drop the script into your page and point it at your API:
 
 ```html
 <script
-    eh-source="http://api.open-notify.org"
-    eh-data-route="/iss-now.json"
-    eh-interval="1s"
-    src="https://cdn.jsdelivr.net/gh/evanjhopkins/ElectricHTML@main/electric-html.js"
+  eh-source="http://api.open-notify.org"
+  eh-data-route="/iss-now.json"
+  eh-interval="1s"
+  src="https://cdn.jsdelivr.net/gh/evanjhopkins/ElectricHTML@main/electric-html.js"
 ></script>
 ```
 
-### Key Attributes
+Bind values anywhere in your markup:
 
-- **`eh-source`**: The base URL of your API server. ElectricHTML will poll this endpoint for updates.
-- **`eh-data-route`**: The API route that returns your JSON state. This endpoint should return the data object that drives your UI.
-- **`eh-interval`**: How often to poll for updates (e.g., `1s`, `500ms`, `2s`). Controls the refresh rate of your live data.
+```html
+<main>
+  <div eh-data="message"></div>
+  <div eh-data="timestamp"></div>
+  <div eh-data="iss_position.latitude"></div>
+  <div eh-data="iss_position.longitude"></div>
+</main>
+```
 
-### Example API Response
-
-With the configuration above, your API endpoint returns JSON like this:
+If the API returns:
 
 ```json
 {
@@ -36,81 +62,81 @@ With the configuration above, your API endpoint returns JSON like this:
 }
 ```
 
-### Binding HTML Elements to Data
+ElectricHTML updates the matching elements automatically.
 
-Tag your HTML elements with `eh-data` attributes that match your JSON structure:
+## Mental Model
 
-```html
-<div eh-data="timestamp" class="timestamp"></div>
-<div eh-data="message"></div>
-<div eh-data="iss_position.latitude"></div>
-<div eh-data="iss_position.longitude"></div>
-```
+ElectricHTML watches your configured data endpoint, reads JSON from it, and maps values into the DOM using attribute selectors.
 
-ElectricHTML will automatically update the content of these elements whenever the API returns new data. Use dot notation to access nested properties.
+- `eh-source` defines the API origin
+- `eh-data-route` defines the JSON endpoint to poll
+- `eh-data` maps an element to a JSON path
+- `eh-get` lets an element trigger a request
 
----
+That means you can ship interactive pages with mostly HTML and a small amount of backend JSON.
 
-That's the core functionality! However, ElectricHTML offers many more features for advanced use cases outlined below.
-
-## Text Decoration
-
-Format your data with prefixes, postfixes, and rounding using additional attributes:
-
-- **`eh-prefix`**: Add text before the value (e.g., currency symbols)
-- **`eh-postfix`**: Add text after the value (e.g., units or percent signs)
-- **`eh-round`**: Round numerical values to a fixed number of decimal places
-- **`eh-mult`**: Multiply numerical values (e.g. percents represented in decimals)
-
-### Examples
+## Core Example
 
 ```html
-<!-- Display "24.992" as "$24.99" with 2 decimal places -->
-<div eh-data="price" eh-prefix="$" eh-round="2"></div>
+<script
+  eh-source="https://example.com"
+  eh-data-route="/api/state"
+  src="https://cdn.jsdelivr.net/gh/evanjhopkins/ElectricHTML@main/electric-html.js"
+></script>
 
-<!-- Display "87.23" as "87%" with no decimal places -->
-<div eh-data="completion_rate" eh-postfix="%" eh-round="0"></div>
-
-<!-- Display 0.143 as "14%" with no decimal places -->
-<div eh-data="cash_percent" eh-mult="100" eh-round="0" eh-postfix="%"></div>
+<section>
+  <h1 eh-data="title"></h1>
+  <p eh-data="status"></p>
+  <p eh-data="metrics.temperature" eh-postfix=" deg" eh-round="1"></p>
+</section>
 ```
 
-## Outbound Requests
+## Formatting Values
 
-Send GET requests to your API and handle responses directly from your HTML elements:
+Use built-in formatting attributes to shape the text before it is inserted.
 
-- **`eh-get`**: The API route to send a GET request to when the element is interacted with
-- **`eh-triggers`**: Triggers a fetch of state after the request completes
-- **`eh-provides`**: Indicates the request returns JSON that should update element values (just like polling updates)
+### Supported attributes
 
-### Examples
-
-```html
-<!-- Button that triggers a request and refreshes state -->
-<button eh-get="/api/increment" eh-triggers>
-  Increment Value
-</button>
-
-<!-- Button that triggers a request and uses the response to update values -->
-<button eh-get="/api/calculate" eh-provides>
-  Calculate Value
-</button>
-```
-
-## Rendering Lists
-
-ElectricHTML can automatically render arrays of data using a template-based approach. When `eh-data` points to an array, the first child element becomes the template and is repeated for each item in the array.
-
-### How It Works
-
-- Use `eh-data` on a container element that points to an array in your JSON
-- The container's first child becomes the template
-- Use `eh-li` attributes within the template to bind to properties of each array item
-- All text decoration attributes (`eh-prefix`, `eh-postfix`, `eh-round`) work with `eh-li`
+- `eh-prefix`: prepends text
+- `eh-postfix`: appends text
+- `eh-round`: rounds numeric output with `toFixed`
+- `eh-mult`: multiplies numeric values before rendering
 
 ### Example
 
-Given this API response:
+```html
+<div eh-data="price" eh-prefix="$" eh-round="2"></div>
+<div eh-data="completion_rate" eh-postfix="%" eh-round="0"></div>
+<div eh-data="cash_percent" eh-mult="100" eh-round="0" eh-postfix="%"></div>
+```
+
+## Triggering Requests
+
+Elements can issue GET requests directly.
+
+### Supported attributes
+
+- `eh-get`: route to request from `eh-source`
+- `eh-triggers`: poll state again after the request completes
+- `eh-provides`: treat the response body as JSON and immediately update bound values
+
+### Example
+
+```html
+<button eh-get="/api/increment" eh-triggers>
+  Increment
+</button>
+
+<button eh-get="/api/calculate" eh-provides>
+  Recalculate
+</button>
+```
+
+## Rendering Arrays
+
+If an `eh-data` binding resolves to an array, ElectricHTML treats the container's first child as a template and repeats it for each item.
+
+### Example response
 
 ```json
 {
@@ -122,7 +148,7 @@ Given this API response:
 }
 ```
 
-You can render it with:
+### Markup
 
 ```html
 <div eh-data="logs">
@@ -133,10 +159,45 @@ You can render it with:
 </div>
 ```
 
-This will produce:
+## Attribute Reference
 
-```
-[LOG] 2025-11-04 10:32:15 Server started
-[LOG] 2025-11-04 10:32:18 Database connected
-[LOG] 2025-11-04 10:32:22 Ready to accept connections
-```
+| Attribute | Purpose |
+| --- | --- |
+| `eh-source` | Base URL for API requests |
+| `eh-data-route` | Route used for polling JSON state |
+| `eh-interval` | Intended polling interval configuration on the script tag |
+| `eh-data` | JSON path to bind into an element |
+| `eh-get` | Route to request on click |
+| `eh-triggers` | Re-fetch state after an action |
+| `eh-provides` | Use action response JSON to update bindings |
+| `eh-li` | Bind a property inside a repeated array row |
+| `eh-prefix` | Add text before a rendered value |
+| `eh-postfix` | Add text after a rendered value |
+| `eh-round` | Render numbers with fixed decimals |
+| `eh-mult` | Multiply a numeric value before rendering |
+
+## Good Fit For
+
+- Lightweight dashboards
+- Monitoring pages
+- Internal admin tools
+- Kiosks and wallboards
+- Simple interactive prototypes
+
+## Philosophy
+
+ElectricHTML sits in a small-space sweet spot:
+
+- more dynamic than static HTML
+- less overhead than a full SPA
+- easy to drop into server-rendered pages
+
+If you like the HTML-first ergonomics of tools like HTMX but want a tiny JSON-to-DOM binding layer, ElectricHTML is aimed at that workflow.
+
+## Status
+
+ElectricHTML is a small, single-file library with a straightforward surface area. It is best suited for focused use cases where simplicity matters more than a large plugin ecosystem.
+
+## License
+
+[MIT](https://github.com/evanjhopkins/ElectricHTML/blob/main/LICENSE)
