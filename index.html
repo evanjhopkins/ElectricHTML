@@ -568,6 +568,61 @@
         animation: pulse-live 2.4s infinite;
       }
 
+      .demo-head-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .demo-toggle {
+        display: inline-flex;
+        padding: 0.28rem;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.92);
+      }
+
+      .demo-toggle button {
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        font: inherit;
+        font-size: 0.82rem;
+        font-weight: 700;
+        padding: 0.52rem 0.8rem;
+        border-radius: 999px;
+        cursor: pointer;
+      }
+
+      .demo-toggle button.is-active {
+        background: var(--ink);
+        color: white;
+      }
+
+      .demo-panel {
+        display: none;
+      }
+
+      .demo-panel.is-active {
+        display: block;
+      }
+
+      .demo-code-frame {
+        overflow: hidden;
+        border: 1px solid rgba(18, 18, 18, 0.08);
+        border-radius: 24px;
+        background: #171717;
+        color: #f7f2e8;
+      }
+
+      .demo-code-frame pre {
+        padding: 1rem 1.05rem 1.15rem;
+        font-size: 0.8rem;
+        line-height: 1.72;
+      }
+
       .demo-main {
         display: grid;
         grid-template-columns: minmax(250px, 0.92fr) minmax(0, 1.08fr);
@@ -964,6 +1019,10 @@
           min-height: 16rem;
         }
 
+        .demo-head-actions {
+          justify-content: flex-start;
+        }
+
         pre {
           padding: 1rem;
           font-size: 0.76rem;
@@ -1240,67 +1299,105 @@
             <div class="demo-screen">
               <div class="demo-screen-head">
                 <div class="demo-screen-title">ISS Live Tracker</div>
-                <div class="demo-live">Live API data</div>
+                <div class="demo-head-actions">
+                  <div class="demo-toggle" role="tablist" aria-label="Demo view">
+                    <button
+                      type="button"
+                      class="is-active"
+                      data-demo-tab="preview"
+                      aria-selected="true"
+                    >
+                      Preview
+                    </button>
+                    <button
+                      type="button"
+                      data-demo-tab="html"
+                      aria-selected="false"
+                    >
+                      HTML
+                    </button>
+                  </div>
+                  <div class="demo-live">Live API data</div>
+                </div>
               </div>
 
-              <div class="demo-main">
-                <div class="orbital-card">
-                  <div class="orbital-label">Current position</div>
-                  <div class="orbital-stage">
-                    <div class="orbital-ring"></div>
-                    <div class="planet"></div>
-                    <div class="iss-dot" id="iss-dot"></div>
+              <div class="demo-panel is-active" data-demo-panel="preview">
+                <div class="demo-main">
+                  <div class="orbital-card">
+                    <div class="orbital-label">Current position</div>
+                    <div class="orbital-stage">
+                      <div class="orbital-ring"></div>
+                      <div class="planet"></div>
+                      <div class="iss-dot" id="iss-dot"></div>
+                    </div>
+                  </div>
+
+                  <div class="demo-data">
+                    <div class="demo-data-grid">
+                      <div class="demo-stat">
+                        <div class="demo-stat-label">Latitude</div>
+                        <div class="demo-stat-value" eh-data="latitude" eh-round="2"></div>
+                      </div>
+                      <div class="demo-stat">
+                        <div class="demo-stat-label">Longitude</div>
+                        <div class="demo-stat-value" eh-data="longitude" eh-round="2"></div>
+                      </div>
+                      <div class="demo-stat">
+                        <div class="demo-stat-label">Altitude</div>
+                        <div
+                          class="demo-stat-value"
+                          eh-data="altitude"
+                          eh-round="0"
+                          eh-postfix=" km"
+                        ></div>
+                      </div>
+                      <div class="demo-stat">
+                        <div class="demo-stat-label">Velocity</div>
+                        <div
+                          class="demo-stat-value"
+                          eh-data="velocity"
+                          eh-round="0"
+                          eh-postfix=" km/h"
+                        ></div>
+                      </div>
+                      <div class="demo-stat">
+                        <div class="demo-stat-label">Visibility</div>
+                        <div class="demo-stat-value small" eh-data="visibility"></div>
+                      </div>
+                      <div class="demo-stat">
+                        <div class="demo-stat-label">Timestamp</div>
+                        <div class="demo-stat-value small" id="demo-timestamp-label">Waiting for data...</div>
+                      </div>
+                    </div>
+
+                    <div class="demo-foot">
+                      <div>
+                        <strong>Station:</strong>
+                        <span eh-data="name"></span>
+                      </div>
+                      <div>
+                        <strong>NORAD ID:</strong>
+                        <span eh-data="id"></span>
+                      </div>
+                    </div>
                   </div>
                 </div>
+              </div>
 
-                <div class="demo-data">
-                  <div class="demo-data-grid">
-                    <div class="demo-stat">
-                      <div class="demo-stat-label">Latitude</div>
-                      <div class="demo-stat-value" eh-data="latitude" eh-round="2"></div>
-                    </div>
-                    <div class="demo-stat">
-                      <div class="demo-stat-label">Longitude</div>
-                      <div class="demo-stat-value" eh-data="longitude" eh-round="2"></div>
-                    </div>
-                    <div class="demo-stat">
-                      <div class="demo-stat-label">Altitude</div>
-                      <div
-                        class="demo-stat-value"
-                        eh-data="altitude"
-                        eh-round="0"
-                        eh-postfix=" km"
-                      ></div>
-                    </div>
-                    <div class="demo-stat">
-                      <div class="demo-stat-label">Velocity</div>
-                      <div
-                        class="demo-stat-value"
-                        eh-data="velocity"
-                        eh-round="0"
-                        eh-postfix=" km/h"
-                      ></div>
-                    </div>
-                    <div class="demo-stat">
-                      <div class="demo-stat-label">Visibility</div>
-                      <div class="demo-stat-value small" eh-data="visibility"></div>
-                    </div>
-                    <div class="demo-stat">
-                      <div class="demo-stat-label">Timestamp</div>
-                      <div class="demo-stat-value small" id="demo-timestamp-label">Waiting for data...</div>
-                    </div>
-                  </div>
+              <div class="demo-panel" data-demo-panel="html">
+                <div class="demo-code-frame">
+                  <pre><code><span class="t-tag">&lt;section&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">eh-data</span>=<span class="t-value">"latitude"</span> <span class="t-attr">eh-round</span>=<span class="t-value">"2"</span><span class="t-tag">&gt;&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">eh-data</span>=<span class="t-value">"longitude"</span> <span class="t-attr">eh-round</span>=<span class="t-value">"2"</span><span class="t-tag">&gt;&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">eh-data</span>=<span class="t-value">"altitude"</span> <span class="t-attr">eh-round</span>=<span class="t-value">"0"</span> <span class="t-attr">eh-postfix</span>=<span class="t-value">" km"</span><span class="t-tag">&gt;&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">eh-data</span>=<span class="t-value">"velocity"</span> <span class="t-attr">eh-round</span>=<span class="t-value">"0"</span> <span class="t-attr">eh-postfix</span>=<span class="t-value">" km/h"</span><span class="t-tag">&gt;&lt;/div&gt;</span>
+<span class="t-tag">&lt;/section&gt;</span>
 
-                  <div class="demo-foot">
-                    <div>
-                      <strong>Station:</strong>
-                      <span eh-data="name"></span>
-                    </div>
-                    <div>
-                      <strong>NORAD ID:</strong>
-                      <span eh-data="id"></span>
-                    </div>
-                  </div>
+<span class="t-tag">&lt;script</span>
+  <span class="t-attr">eh-source</span>=<span class="t-value">"https://api.wheretheiss.at"</span>
+  <span class="t-attr">eh-data-route</span>=<span class="t-value">"/v1/satellites/25544"</span>
+  <span class="t-attr">src</span>=<span class="t-value">"./electric-html.js"</span>
+<span class="t-tag">&gt;&lt;/script&gt;</span></code></pre>
                 </div>
               </div>
 
@@ -1345,6 +1442,8 @@
         const lonEl = document.getElementById("demo-lon-source");
         const timeEl = document.getElementById("demo-time-source");
         const timeLabel = document.getElementById("demo-timestamp-label");
+        const demoTabButtons = Array.from(document.querySelectorAll("[data-demo-tab]"));
+        const demoPanels = Array.from(document.querySelectorAll("[data-demo-panel]"));
 
         function updateOrbit() {
           if (!dot || !latEl || !lonEl) {
@@ -1380,6 +1479,21 @@
           });
         }
 
+        function setDemoTab(name) {
+          demoTabButtons.forEach((button) => {
+            const active = button.getAttribute("data-demo-tab") === name;
+            button.classList.toggle("is-active", active);
+            button.setAttribute("aria-selected", active ? "true" : "false");
+          });
+
+          demoPanels.forEach((panel) => {
+            panel.classList.toggle(
+              "is-active",
+              panel.getAttribute("data-demo-panel") === name
+            );
+          });
+        }
+
         const observer = new MutationObserver(() => {
           updateOrbit();
           updateTimestamp();
@@ -1391,8 +1505,15 @@
           }
         });
 
+        demoTabButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            setDemoTab(button.getAttribute("data-demo-tab"));
+          });
+        });
+
         updateOrbit();
         updateTimestamp();
+        setDemoTab("preview");
       })();
     </script>
   </body>
