@@ -129,9 +129,9 @@
 
       .hero-grid {
         display: grid;
-        grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
-        gap: 2rem;
-        align-items: end;
+        grid-template-columns: minmax(0, 0.92fr) minmax(340px, 1.08fr);
+        gap: 2.8rem;
+        align-items: center;
         margin-bottom: 1.8rem;
       }
 
@@ -147,7 +147,7 @@
       h1 {
         margin: 0;
         max-width: 9.5ch;
-        font-size: clamp(4rem, 8vw, 7.2rem);
+        font-size: clamp(3.6rem, 7vw, 6.3rem);
         line-height: 0.92;
         letter-spacing: -0.08em;
       }
@@ -158,10 +158,6 @@
         color: var(--muted);
         font-size: 1.08rem;
         line-height: 1.8;
-      }
-
-      .hero .frame {
-        margin-top: 0.4rem;
       }
 
       .actions {
@@ -203,6 +199,36 @@
       .hero-side {
         display: grid;
         gap: 1rem;
+      }
+
+      .hero-side .browser-shell {
+        box-shadow: 0 26px 70px rgba(18, 18, 18, 0.1);
+      }
+
+      .hero-side .demo-screen {
+        gap: 0.9rem;
+      }
+
+      .hero-side .demo-main {
+        gap: 0.85rem;
+      }
+
+      .hero-side .orbital-card {
+        min-height: 17rem;
+      }
+
+      .hero-side .demo-code-frame pre {
+        min-height: 17rem;
+      }
+
+      .hero-demo-caption {
+        color: var(--muted);
+        font-size: 0.92rem;
+        line-height: 1.7;
+      }
+
+      .hero-demo-caption strong {
+        color: var(--ink);
       }
 
       .note {
@@ -315,7 +341,7 @@
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 1rem;
-        margin-top: 2.2rem;
+        margin-top: 0.8rem;
       }
 
       .rail-card {
@@ -901,6 +927,10 @@
           grid-template-columns: 1fr;
         }
 
+        .hero-side {
+          order: 2;
+        }
+
         .section-head {
           gap: 0.9rem;
         }
@@ -944,7 +974,7 @@
 
         h1 {
           max-width: none;
-          font-size: clamp(3rem, 17vw, 4.6rem);
+          font-size: clamp(2.9rem, 16vw, 4.3rem);
           line-height: 0.94;
         }
 
@@ -997,6 +1027,11 @@
 
         .hero-grid {
           margin-bottom: 1.3rem;
+        }
+
+        .hero-side .orbital-card,
+        .hero-side .demo-code-frame pre {
+          min-height: 0;
         }
 
         .terminal-name {
@@ -1083,50 +1118,137 @@
             </div>
           </div>
 
-          <div class="hero-side fade-up d2">
-            <div class="note">
-              <p class="note-label">Promise</p>
-              <strong>Less frontend machinery.</strong>
-              <p>
-                Keep authoring in recognizable HTML while your API supplies the
-                live state.
-              </p>
+          <div class="hero-side fade-up d2" id="demo">
+            <div class="frame browser-shell">
+              <div class="browser-top">
+                <div class="browser-dots" aria-hidden="true">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <div class="browser-address">
+                  https://api.wheretheiss.at/v1/satellites/25544
+                </div>
+              </div>
+
+              <div class="demo-screen">
+                <div class="demo-screen-head">
+                  <div class="demo-screen-title">ISS Live Tracker</div>
+                  <div class="demo-head-actions">
+                    <div class="demo-toggle" role="tablist" aria-label="Demo view">
+                      <button
+                        type="button"
+                        class="is-active"
+                        data-demo-tab="preview"
+                        aria-selected="true"
+                      >
+                        Preview
+                      </button>
+                      <button
+                        type="button"
+                        data-demo-tab="html"
+                        aria-selected="false"
+                      >
+                        HTML
+                      </button>
+                    </div>
+                    <div class="demo-live">Live API data</div>
+                  </div>
+                </div>
+
+                <div class="demo-panel is-active" data-demo-panel="preview">
+                  <div class="demo-main">
+                    <div class="orbital-card">
+                      <div class="orbital-label">Current position</div>
+                      <div class="orbital-stage">
+                        <div class="orbital-ring"></div>
+                        <div class="planet"></div>
+                        <div class="iss-dot" id="iss-dot"></div>
+                      </div>
+                    </div>
+
+                    <div class="demo-data">
+                      <div class="demo-data-grid">
+                        <div class="demo-stat">
+                          <div class="demo-stat-label">Latitude</div>
+                          <div class="demo-stat-value" eh-data="latitude" eh-round="2"></div>
+                        </div>
+                        <div class="demo-stat">
+                          <div class="demo-stat-label">Longitude</div>
+                          <div class="demo-stat-value" eh-data="longitude" eh-round="2"></div>
+                        </div>
+                        <div class="demo-stat">
+                          <div class="demo-stat-label">Altitude</div>
+                          <div
+                            class="demo-stat-value"
+                            eh-data="altitude"
+                            eh-round="0"
+                            eh-postfix=" km"
+                          ></div>
+                        </div>
+                        <div class="demo-stat">
+                          <div class="demo-stat-label">Velocity</div>
+                          <div
+                            class="demo-stat-value"
+                            eh-data="velocity"
+                            eh-round="0"
+                            eh-postfix=" km/h"
+                          ></div>
+                        </div>
+                        <div class="demo-stat">
+                          <div class="demo-stat-label">Visibility</div>
+                          <div class="demo-stat-value small" eh-data="visibility"></div>
+                        </div>
+                        <div class="demo-stat">
+                          <div class="demo-stat-label">Timestamp</div>
+                          <div class="demo-stat-value small" id="demo-timestamp-label">Waiting for data...</div>
+                        </div>
+                      </div>
+
+                      <div class="demo-foot">
+                        <div>
+                          <strong>Station:</strong>
+                          <span eh-data="name"></span>
+                        </div>
+                        <div>
+                          <strong>NORAD ID:</strong>
+                          <span eh-data="id"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="demo-panel" data-demo-panel="html">
+                  <div class="demo-code-frame">
+                    <pre><code><span class="t-tag">&lt;section&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">eh-data</span>=<span class="t-value">"latitude"</span> <span class="t-attr">eh-round</span>=<span class="t-value">"2"</span><span class="t-tag">&gt;&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">eh-data</span>=<span class="t-value">"longitude"</span> <span class="t-attr">eh-round</span>=<span class="t-value">"2"</span><span class="t-tag">&gt;&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">eh-data</span>=<span class="t-value">"altitude"</span> <span class="t-attr">eh-round</span>=<span class="t-value">"0"</span> <span class="t-attr">eh-postfix</span>=<span class="t-value">" km"</span><span class="t-tag">&gt;&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">eh-data</span>=<span class="t-value">"velocity"</span> <span class="t-attr">eh-round</span>=<span class="t-value">"0"</span> <span class="t-attr">eh-postfix</span>=<span class="t-value">" km/h"</span><span class="t-tag">&gt;&lt;/div&gt;</span>
+<span class="t-tag">&lt;/section&gt;</span>
+
+<span class="t-tag">&lt;script</span>
+  <span class="t-attr">eh-source</span>=<span class="t-value">"https://api.wheretheiss.at"</span>
+  <span class="t-attr">eh-data-route</span>=<span class="t-value">"/v1/satellites/25544"</span>
+  <span class="t-attr">src</span>=<span class="t-value">"./electric-html.js"</span>
+<span class="t-tag">&gt;&lt;/script&gt;</span></code></pre>
+                  </div>
+                </div>
+
+                <span class="sr-only" id="demo-lat-source" eh-data="latitude"></span>
+                <span class="sr-only" id="demo-lon-source" eh-data="longitude"></span>
+                <span class="sr-only" id="demo-time-source" eh-data="timestamp"></span>
+              </div>
             </div>
-            <div class="note">
-              <p class="note-label">Shape</p>
-              <strong>Single file. Direct bindings.</strong>
-              <p>
-                No build step, no component layer, and no need to reshape your
-                page around a framework.
-              </p>
+            <div class="hero-demo-caption">
+              <strong>Live demo:</strong> this is real ISS telemetry updating on
+              the page through ElectricHTML bindings.
             </div>
           </div>
         </div>
 
         <div class="wrap">
-          <div class="frame fade-up d3">
-            <div class="terminal">
-              <div class="terminal-top">
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="terminal-name">electric-start.html</span>
-              </div>
-              <pre><code><span class="t-comment">&lt;!-- Point ElectricHTML at your API --&gt;</span>
-<span class="t-tag">&lt;script</span>
-  <span class="t-attr">eh-source</span>=<span class="t-value">"https://example.com"</span>
-  <span class="t-attr">eh-data-route</span>=<span class="t-value">"/api/state"</span>
-  <span class="t-attr">src</span>=<span class="t-value">"./electric-html.js"</span>
-<span class="t-tag">&gt;&lt;/script&gt;</span>
-
-<span class="t-tag">&lt;h1</span> <span class="t-attr">eh-data</span>=<span class="t-value">"title"</span><span class="t-tag">&gt;&lt;/h1&gt;</span>
-<span class="t-tag">&lt;p</span> <span class="t-attr">eh-data</span>=<span class="t-value">"status"</span><span class="t-tag">&gt;&lt;/p&gt;</span>
-<span class="t-tag">&lt;button</span> <span class="t-attr">eh-get</span>=<span class="t-value">"/api/restart"</span> <span class="t-attr">eh-triggers</span><span class="t-tag">&gt;</span>
-  Restart
-<span class="t-tag">&lt;/button&gt;</span></code></pre>
-            </div>
-          </div>
-
           <div class="rail">
             <div class="rail-card">
               <strong>Bind</strong>
@@ -1249,161 +1371,58 @@
         </div>
       </section>
 
-      <section class="section" id="demo">
+      <section class="section">
         <div class="wrap demo-layout">
           <div class="demo-copy">
-            <div class="section-kicker">Demo</div>
-            <h2>See ElectricHTML bound to a live public API.</h2>
+            <div class="section-kicker">Live Example</div>
+            <h2>Why this demo works as a landing page centerpiece.</h2>
             <p class="section-copy">
-              This panel is reading real ISS telemetry from
-              <a href="https://wheretheiss.at/w/developer">wheretheiss.at</a>
-              and rendering it with ElectricHTML attributes on this page. The
-              browser chrome is decorative, but the values inside it are live.
+              The hero now shows ElectricHTML doing something real immediately:
+              a public API response becomes a small live interface with no app
+              shell, no component framework, and no heavy setup.
             </p>
             <div class="demo-points">
               <div class="demo-point">
                 <div class="demo-point-mark"></div>
                 <div>
-                  <strong>Real bindings</strong>
+                  <strong>Real source data</strong>
                   <span>
-                    The latitude, longitude, altitude, velocity, visibility,
-                    and timestamp are all driven by ElectricHTML.
+                    The ISS values come from
+                    <a href="https://wheretheiss.at/w/developer">wheretheiss.at</a>,
+                    so visitors see actual live telemetry instead of mock data.
                   </span>
                 </div>
               </div>
               <div class="demo-point">
                 <div class="demo-point-mark"></div>
                 <div>
-                  <strong>Real polling</strong>
+                  <strong>Direct mapping</strong>
                   <span>
-                    The library keeps polling the public endpoint and updates
-                    the mini interface as the station moves.
+                    The HTML view shows how a few attributes are enough to bind
+                    latitude, longitude, altitude, and velocity into the UI.
                   </span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="frame browser-shell">
-            <div class="browser-top">
-              <div class="browser-dots" aria-hidden="true">
-                <span></span>
-                <span></span>
-                <span></span>
+          <div class="block">
+            <div class="section-kicker">What It Proves</div>
+            <h2>Small enough for a landing page, real enough to trust.</h2>
+            <p class="section-copy">
+              Putting the live example above the fold makes the pitch tangible.
+              Visitors can inspect the HTML, switch back to the running preview,
+              and understand the framework in seconds.
+            </p>
+            <div class="mini-grid">
+              <div class="mini">
+                <strong>Above the fold</strong>
+                <span>The first screen now shows ElectricHTML in action instead of only describing it.</span>
               </div>
-              <div class="browser-address">
-                https://api.wheretheiss.at/v1/satellites/25544
+              <div class="mini">
+                <strong>View source quickly</strong>
+                <span>The built-in Preview and HTML switch keeps the demo interactive without feeling cluttered.</span>
               </div>
-            </div>
-
-            <div class="demo-screen">
-              <div class="demo-screen-head">
-                <div class="demo-screen-title">ISS Live Tracker</div>
-                <div class="demo-head-actions">
-                  <div class="demo-toggle" role="tablist" aria-label="Demo view">
-                    <button
-                      type="button"
-                      class="is-active"
-                      data-demo-tab="preview"
-                      aria-selected="true"
-                    >
-                      Preview
-                    </button>
-                    <button
-                      type="button"
-                      data-demo-tab="html"
-                      aria-selected="false"
-                    >
-                      HTML
-                    </button>
-                  </div>
-                  <div class="demo-live">Live API data</div>
-                </div>
-              </div>
-
-              <div class="demo-panel is-active" data-demo-panel="preview">
-                <div class="demo-main">
-                  <div class="orbital-card">
-                    <div class="orbital-label">Current position</div>
-                    <div class="orbital-stage">
-                      <div class="orbital-ring"></div>
-                      <div class="planet"></div>
-                      <div class="iss-dot" id="iss-dot"></div>
-                    </div>
-                  </div>
-
-                  <div class="demo-data">
-                    <div class="demo-data-grid">
-                      <div class="demo-stat">
-                        <div class="demo-stat-label">Latitude</div>
-                        <div class="demo-stat-value" eh-data="latitude" eh-round="2"></div>
-                      </div>
-                      <div class="demo-stat">
-                        <div class="demo-stat-label">Longitude</div>
-                        <div class="demo-stat-value" eh-data="longitude" eh-round="2"></div>
-                      </div>
-                      <div class="demo-stat">
-                        <div class="demo-stat-label">Altitude</div>
-                        <div
-                          class="demo-stat-value"
-                          eh-data="altitude"
-                          eh-round="0"
-                          eh-postfix=" km"
-                        ></div>
-                      </div>
-                      <div class="demo-stat">
-                        <div class="demo-stat-label">Velocity</div>
-                        <div
-                          class="demo-stat-value"
-                          eh-data="velocity"
-                          eh-round="0"
-                          eh-postfix=" km/h"
-                        ></div>
-                      </div>
-                      <div class="demo-stat">
-                        <div class="demo-stat-label">Visibility</div>
-                        <div class="demo-stat-value small" eh-data="visibility"></div>
-                      </div>
-                      <div class="demo-stat">
-                        <div class="demo-stat-label">Timestamp</div>
-                        <div class="demo-stat-value small" id="demo-timestamp-label">Waiting for data...</div>
-                      </div>
-                    </div>
-
-                    <div class="demo-foot">
-                      <div>
-                        <strong>Station:</strong>
-                        <span eh-data="name"></span>
-                      </div>
-                      <div>
-                        <strong>NORAD ID:</strong>
-                        <span eh-data="id"></span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="demo-panel" data-demo-panel="html">
-                <div class="demo-code-frame">
-                  <pre><code><span class="t-tag">&lt;section&gt;</span>
-  <span class="t-tag">&lt;div</span> <span class="t-attr">eh-data</span>=<span class="t-value">"latitude"</span> <span class="t-attr">eh-round</span>=<span class="t-value">"2"</span><span class="t-tag">&gt;&lt;/div&gt;</span>
-  <span class="t-tag">&lt;div</span> <span class="t-attr">eh-data</span>=<span class="t-value">"longitude"</span> <span class="t-attr">eh-round</span>=<span class="t-value">"2"</span><span class="t-tag">&gt;&lt;/div&gt;</span>
-  <span class="t-tag">&lt;div</span> <span class="t-attr">eh-data</span>=<span class="t-value">"altitude"</span> <span class="t-attr">eh-round</span>=<span class="t-value">"0"</span> <span class="t-attr">eh-postfix</span>=<span class="t-value">" km"</span><span class="t-tag">&gt;&lt;/div&gt;</span>
-  <span class="t-tag">&lt;div</span> <span class="t-attr">eh-data</span>=<span class="t-value">"velocity"</span> <span class="t-attr">eh-round</span>=<span class="t-value">"0"</span> <span class="t-attr">eh-postfix</span>=<span class="t-value">" km/h"</span><span class="t-tag">&gt;&lt;/div&gt;</span>
-<span class="t-tag">&lt;/section&gt;</span>
-
-<span class="t-tag">&lt;script</span>
-  <span class="t-attr">eh-source</span>=<span class="t-value">"https://api.wheretheiss.at"</span>
-  <span class="t-attr">eh-data-route</span>=<span class="t-value">"/v1/satellites/25544"</span>
-  <span class="t-attr">src</span>=<span class="t-value">"./electric-html.js"</span>
-<span class="t-tag">&gt;&lt;/script&gt;</span></code></pre>
-                </div>
-              </div>
-
-              <span class="sr-only" id="demo-lat-source" eh-data="latitude"></span>
-              <span class="sr-only" id="demo-lon-source" eh-data="longitude"></span>
-              <span class="sr-only" id="demo-time-source" eh-data="timestamp"></span>
             </div>
           </div>
         </div>
