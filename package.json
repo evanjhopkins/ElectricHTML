@@ -1,0 +1,7 @@
+{
+  "name": "electric-html",
+  "private": true,
+  "scripts": {
+    "test": "node --test test/electric-html.test.js"
+  }
+}
