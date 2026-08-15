@@ -7,6 +7,27 @@
     console.error("ElectricHtml: 'eh-source' tag not found or had no value");
     return;
   }
+  const pollInterval = parseInterval(intervalRaw);
+
+  function parseInterval(value) {
+    if (value === null) {
+      return 1000;
+    }
+
+    const match = value.trim().match(/^(\d+(?:\.\d+)?)\s*(ms|s)?$/i);
+    if (!match) {
+      console.error(`ElectricHtml: invalid 'eh-interval' value "${value}"`);
+      return 1000;
+    }
+
+    const duration = Number(match[1]);
+    if (!Number.isFinite(duration) || duration <= 0) {
+      console.error(`ElectricHtml: invalid 'eh-interval' value "${value}"`);
+      return 1000;
+    }
+
+    return match[2]?.toLowerCase() === "s" ? duration * 1000 : duration;
+  }
 
   function get(obj, path) {
     if (!obj || typeof obj !== "object" || !path || typeof path !== "string") {
@@ -89,8 +110,8 @@
           if (rowDataEl !== null) {
             insertValueOnEl(rowDataEl, rowData[key]);
           }
-          newChildren.push(row);
         }
+        newChildren.push(row);
       }
       maybeListEl.replaceChildren(...newChildren);
       return true;
@@ -131,8 +152,11 @@
     }
   }
 
+  async function schedulePoll() {
+    await pollData();
+    setTimeout(schedulePoll, pollInterval);
+  }
+
   init();
-  // Poll every second
-  setInterval(pollData, 1000);
-  pollData(); // Initial call
+  schedulePoll();
 })();
