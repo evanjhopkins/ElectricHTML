@@ -122,6 +122,9 @@ function element(tagName, attributes, children) {
 
 function jsonResponse(data) {
   return {
+    ok: true,
+    status: 200,
+    statusText: "OK",
     async json() {
       return data;
     },

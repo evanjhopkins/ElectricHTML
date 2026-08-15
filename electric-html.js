@@ -56,9 +56,22 @@
     return current;
   }
 
+  async function request(route) {
+    const url = `${source}${route}`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      const status = [response.status, response.statusText]
+        .filter(Boolean)
+        .join(" ");
+      const details = status ? ` (${status})` : "";
+      throw new Error(`ElectricHtml: GET ${url} failed${details}`);
+    }
+    return response;
+  }
+
   async function pollData() {
     try {
-      const response = await fetch(`${source}${dataRoute}`);
+      const response = await request(dataRoute);
       const data = await response.json();
       updateValues(data);
     } catch (error) {
@@ -140,7 +153,7 @@
       const triggers = clickEl.hasAttribute("eh-triggers");
       const provides = clickEl.hasAttribute("eh-provides");
       clickEl.onclick = async () => {
-        const res = await fetch(`${source}${route}`);
+        const res = await request(route);
         if (triggers) {
           pollData();
         }

@@ -111,6 +111,9 @@ test("recovers and schedules another poll after invalid response JSON", async ()
   const failure = new SyntaxError("invalid JSON");
   const harness = await runElectricHtml({
     fetch: async () => ({
+      ok: true,
+      status: 200,
+      statusText: "OK",
       async json() {
         throw failure;
       },
@@ -120,6 +123,32 @@ test("recovers and schedules another poll after invalid response JSON", async ()
   assert.equal(harness.timers.length, 1);
   assert.equal(harness.errors[0][0], "Polling error:");
   assert.equal(harness.errors[0][1], failure);
+});
+
+test("does not render an unsuccessful polling response", async () => {
+  const status = element("span", { "eh-data": "status" });
+  status.textContent = "Last known value";
+  let jsonCalled = false;
+  const harness = await runElectricHtml({
+    elements: [status],
+    fetch: async () => ({
+      ok: false,
+      status: 500,
+      statusText: "Internal Server Error",
+      async json() {
+        jsonCalled = true;
+        return { status: "error response" };
+      },
+    }),
+  });
+
+  assert.equal(jsonCalled, false);
+  assert.equal(status.textContent, "Last known value");
+  assert.equal(harness.timers.length, 1);
+  assert.match(
+    harness.errors[0][1].message,
+    /GET https:\/\/example\.test\/state failed \(500 Internal Server Error\)/,
+  );
 });
 
 test("renders string, number, zero, and boolean values", async () => {
@@ -426,4 +455,45 @@ test("surfaces action request failures to the click caller", async () => {
   });
 
   await assert.rejects(button.onclick(), failure);
+});
+
+test("rejects unsuccessful actions without providing data or triggering a poll", async () => {
+  const status = element("span", { "eh-data": "status" });
+  const button = element("button", {
+    "eh-get": "/fail",
+    "eh-provides": "",
+    "eh-triggers": "",
+  });
+  let stateRequestCount = 0;
+  let actionJsonCalled = false;
+  const harness = await runElectricHtml({
+    elements: [status, button],
+    fetch: async (url) => {
+      if (url.endsWith("/fail")) {
+        return {
+          ok: false,
+          status: 404,
+          statusText: "Not Found",
+          async json() {
+            actionJsonCalled = true;
+            return { status: "incorrect" };
+          },
+        };
+      }
+
+      stateRequestCount += 1;
+      return jsonResponse({ status: "initial" });
+    },
+  });
+
+  await assert.rejects(
+    button.onclick(),
+    /GET https:\/\/example\.test\/fail failed \(404 Not Found\)/,
+  );
+  await harness.flush();
+
+  assert.equal(actionJsonCalled, false);
+  assert.equal(stateRequestCount, 1);
+  assert.equal(status.textContent, "initial");
+  assert.equal(harness.fetchCalls.length, 2);
 });
