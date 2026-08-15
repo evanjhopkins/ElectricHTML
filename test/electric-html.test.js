@@ -283,6 +283,60 @@ test("renders one list row per array item and preserves a hidden template", asyn
   );
 });
 
+test("renders list properties whose names contain CSS selector characters", async () => {
+  const template = element("div", {}, [
+    element("span", { "eh-li": 'customer"name' }),
+    element("span", { "eh-li": "status]code" }),
+  ]);
+  const list = element("div", { "eh-data": "items" }, [template]);
+
+  await runElectricHtml({
+    elements: [list],
+    fetch: async () =>
+      jsonResponse({
+        items: [
+          {
+            'customer"name': "Alice",
+            "status]code": "ready",
+          },
+        ],
+      }),
+  });
+
+  assert.equal(list.children[1].children[0].textContent, "Alice");
+  assert.equal(list.children[1].children[1].textContent, "ready");
+});
+
+test("updates every list binding that uses the same property", async () => {
+  const template = element("div", {}, [
+    element("strong", { "eh-li": "name" }),
+    element("span", { "eh-li": "name" }),
+  ]);
+  const list = element("div", { "eh-data": "items" }, [template]);
+
+  await runElectricHtml({
+    elements: [list],
+    fetch: async () => jsonResponse({ items: [{ name: "ElectricHTML" }] }),
+  });
+
+  assert.equal(list.children[1].children[0].textContent, "ElectricHTML");
+  assert.equal(list.children[1].children[1].textContent, "ElectricHTML");
+});
+
+test("leaves list bindings unchanged when a property is absent", async () => {
+  const name = element("span", { "eh-li": "name" });
+  name.textContent = "Unknown";
+  const template = element("div", {}, [name]);
+  const list = element("div", { "eh-data": "items" }, [template]);
+
+  await runElectricHtml({
+    elements: [list],
+    fetch: async () => jsonResponse({ items: [{}] }),
+  });
+
+  assert.equal(list.children[1].children[0].textContent, "Unknown");
+});
+
 test("applies value formatting inside list rows", async () => {
   const template = element("div", {}, [
     element("span", {

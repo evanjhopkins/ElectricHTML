@@ -118,9 +118,9 @@
         const row = template.cloneNode(true);
         row.style.display = "";
 
-        for (const key in rowData) {
-          const rowDataEl = row.querySelector(`[eh-li="${key}"]`);
-          if (rowDataEl !== null) {
+        for (const rowDataEl of row.querySelectorAll("[eh-li]")) {
+          const key = rowDataEl.getAttribute("eh-li");
+          if (rowData !== null && Object.hasOwn(rowData, key)) {
             insertValueOnEl(rowDataEl, rowData[key]);
           }
         }
