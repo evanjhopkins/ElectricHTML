@@ -152,16 +152,20 @@
       const route = clickEl.getAttribute("eh-get");
       const triggers = clickEl.hasAttribute("eh-triggers");
       const provides = clickEl.hasAttribute("eh-provides");
-      clickEl.onclick = async () => {
-        const res = await request(route);
-        if (triggers) {
-          pollData();
+      clickEl.addEventListener("click", async () => {
+        try {
+          const res = await request(route);
+          if (triggers) {
+            pollData();
+          }
+          if (provides) {
+            const data = await res.json();
+            updateValues(data);
+          }
+        } catch (error) {
+          console.error("Action error:", error);
         }
-        if (provides) {
-          const data = await res.json();
-          updateValues(data);
-        }
-      };
+      });
     }
   }
 

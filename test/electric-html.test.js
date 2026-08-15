@@ -405,13 +405,28 @@ test("issues an eh-get request when an initialized element is clicked", async ()
   const button = element("button", { "eh-get": "/refresh" });
   const harness = await runElectricHtml({ elements: [button] });
 
-  assert.equal(typeof button.onclick, "function");
-  await button.onclick();
+  await button.click();
 
   assert.deepEqual(harness.fetchCalls, [
     ["https://example.test/state"],
     ["https://example.test/refresh"],
   ]);
+});
+
+test("preserves an existing application click handler", async () => {
+  const button = element("button", { "eh-get": "/refresh" });
+  let applicationClickCount = 0;
+  const applicationHandler = () => {
+    applicationClickCount += 1;
+  };
+  button.onclick = applicationHandler;
+  const harness = await runElectricHtml({ elements: [button] });
+
+  await button.click();
+
+  assert.equal(button.onclick, applicationHandler);
+  assert.equal(applicationClickCount, 1);
+  assert.equal(harness.fetchCalls.length, 2);
 });
 
 test("uses an eh-provides response to update bindings", async () => {
@@ -429,7 +444,7 @@ test("uses an eh-provides response to update bindings", async () => {
   });
 
   assert.equal(status.textContent, "initial");
-  await button.onclick();
+  await button.click();
   assert.equal(status.textContent, "updated");
   assert.equal(harness.fetchCalls.length, 2);
 });
@@ -454,7 +469,7 @@ test("eh-triggers polls state again after its action request", async () => {
     },
   });
 
-  await button.onclick();
+  await button.click();
   await harness.flush();
 
   assert.equal(stateRequestCount, 2);
@@ -487,7 +502,7 @@ test("an action with both eh-provides and eh-triggers processes both responses",
     },
   });
 
-  await button.onclick();
+  await button.click();
   await harness.flush();
 
   assert.equal(stateRequestCount, 2);
@@ -495,10 +510,10 @@ test("an action with both eh-provides and eh-triggers processes both responses",
   assert.equal(harness.fetchCalls.length, 3);
 });
 
-test("surfaces action request failures to the click caller", async () => {
+test("logs action request failures without an unhandled rejection", async () => {
   const failure = new Error("action failed");
   const button = element("button", { "eh-get": "/fail" });
-  await runElectricHtml({
+  const harness = await runElectricHtml({
     elements: [button],
     fetch: async (url) => {
       if (url.endsWith("/fail")) {
@@ -508,10 +523,13 @@ test("surfaces action request failures to the click caller", async () => {
     },
   });
 
-  await assert.rejects(button.onclick(), failure);
+  await button.click();
+
+  assert.equal(harness.errors[0][0], "Action error:");
+  assert.equal(harness.errors[0][1], failure);
 });
 
-test("rejects unsuccessful actions without providing data or triggering a poll", async () => {
+test("logs unsuccessful actions without providing data or triggering a poll", async () => {
   const status = element("span", { "eh-data": "status" });
   const button = element("button", {
     "eh-get": "/fail",
@@ -540,8 +558,9 @@ test("rejects unsuccessful actions without providing data or triggering a poll",
     },
   });
 
-  await assert.rejects(
-    button.onclick(),
+  await button.click();
+  assert.match(
+    harness.errors[0][1].message,
     /GET https:\/\/example\.test\/fail failed \(404 Not Found\)/,
   );
   await harness.flush();

@@ -43,6 +43,7 @@ class TestElement {
     this.children = children;
     this.style = {};
     this.onclick = null;
+    this.listeners = new Map();
     this._textContent = "";
   }
 
@@ -68,6 +69,22 @@ class TestElement {
 
   hasAttribute(name) {
     return this.attributes.has(name);
+  }
+
+  addEventListener(type, listener) {
+    const listeners = this.listeners.get(type) ?? [];
+    listeners.push(listener);
+    this.listeners.set(type, listeners);
+  }
+
+  async click() {
+    const event = { target: this, type: "click" };
+    if (this.onclick !== null) {
+      await this.onclick(event);
+    }
+    for (const listener of this.listeners.get("click") ?? []) {
+      await listener(event);
+    }
   }
 
   querySelector(selector) {
